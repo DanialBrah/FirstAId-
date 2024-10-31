@@ -1,67 +1,22 @@
 import 'package:flutter/material.dart';
-import 'symptomchecker.dart'; // Import the symptom checker page
-import 'criticalemergency.dart'; // Import the critical emergency page
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class CriticalEmergencyPage extends StatefulWidget {
+  const CriticalEmergencyPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Symptom Checker App',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Login Page'),
-    );
-  }
+  _CriticalEmergencyPageState createState() => _CriticalEmergencyPageState();
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _obscurePassword = true; // To toggle password visibility
-  int _selectedIndex = 0; // Default index for BottomNavigationBar
+class _CriticalEmergencyPageState extends State<CriticalEmergencyPage> {
+  int _selectedIndex = 4;
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      if (index == 3) { // If "Symptom" is tapped
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const SymptomCheckerPage()),
-        );
+      if (index == 3) {
+        Navigator.pop(context);
       }
     });
-  }
-
-  void _login() {
-    // Here you would typically handle the login logic
-    String username = _usernameController.text;
-    String password = _passwordController.text;
-
-    // For demonstration, just print the values
-    print('Username: $username, Password: $password');
-
-    // You can also navigate to the SymptomCheckerPage after successful login
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const SymptomCheckerPage()),
-    );
   }
 
   @override
@@ -79,7 +34,10 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-          title: const Text('Login', style: TextStyle(fontSize: 24, color: Colors.white)), // Set text color to white
+          title: const Text(
+            'First Aid',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -88,46 +46,16 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: GridView.count(
+            crossAxisCount: 2,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            shrinkWrap: true,
             children: <Widget>[
-              const Text(
-                'Welcome to the Symptom Checker App',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 40),
-              _buildRoundedInputField(
-                controller: _usernameController,
-                labelText: 'Username',
-              ),
-              const SizedBox(height: 20),
-              _buildRoundedInputField(
-                controller: _passwordController,
-                labelText: 'Password',
-                obscureText: _obscurePassword,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword; // Toggle password visibility
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _login,
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30), // Rounded button
-                  ),
-                ),
-                child: const Text('Login'),
-              ),
+              _buildCircularButton(Icons.local_hospital, 'Ambulance'),
+              _buildCircularButton(Icons.phone, 'Call'),
+              _buildCircularButton(Icons.mic, 'Speak'),
+              _buildCircularButton(Icons.chat_bubble, 'Message'),
             ],
           ),
         ),
@@ -145,46 +73,43 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Map',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.play_circle, size: 26),
+            icon: Icon(Icons.play_arrow, size: 26),
             label: 'Play',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.sick, size: 26),
-            label: 'Symptom',
+            icon: Icon(Icons.person, size: 26),
+            label: 'Profile',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.error, size: 26),
+            icon: Icon(Icons.error_outline, size: 26),
             label: 'Alert',
           ),
         ],
-        selectedItemColor: Colors.deepPurple,
+        selectedItemColor: Colors.deepPurple, // Changed to match main.dart
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),
     );
   }
 
-  Widget _buildRoundedInputField({
-    required TextEditingController controller,
-    required String labelText,
-    bool obscureText = false,
-    Widget? suffixIcon,
-  }) {
-    return TextField(
-      controller: controller,
-      obscureText: obscureText,
-      decoration: InputDecoration(
-        labelText: labelText,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30), // Rounded corners
-          borderSide: const BorderSide(color: Colors.deepPurple),
+  Widget _buildCircularButton(IconData icon, String label) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.lightBlueAccent, // You can change this if needed
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Icon(icon, size: 48, color: Colors.white),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: const BorderSide(color: Colors.deepPurple),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold), // Changed text color to black
         ),
-        suffixIcon: suffixIcon, // Option to add a suffix icon
-      ),
+      ],
     );
   }
 }

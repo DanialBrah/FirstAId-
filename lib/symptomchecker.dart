@@ -9,19 +9,26 @@ class SymptomCheckerPage extends StatefulWidget {
 }
 
 class _SymptomCheckerPageState extends State<SymptomCheckerPage> {
-  int _selectedIndex = 3; // Default to 'Symptom' tab being selected
+  int _selectedIndex = 3;
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index; // Update the selected index
-    });
+    if (index == 4) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const CriticalEmergencyPage()),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60.0), // Adjust the height of the app bar
+        preferredSize: const Size.fromHeight(60.0),
         child: AppBar(
           flexibleSpace: Container(
             decoration: const BoxDecoration(
@@ -38,9 +45,9 @@ class _SymptomCheckerPageState extends State<SymptomCheckerPage> {
               // Handle notification action
             },
           ),
-          title: const Image(
-            image: AssetImage('assets/images/rash.png'),
-            height: 40,
+          title: const Text(
+            'First Aid',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           centerTitle: true,
           actions: [
@@ -51,37 +58,61 @@ class _SymptomCheckerPageState extends State<SymptomCheckerPage> {
               },
             ),
           ],
-          backgroundColor: Colors.transparent, // Make the AppBar transparent to see the gradient
-          elevation: 0, // Remove the AppBar shadow to get a clean gradient look
+          backgroundColor: Colors.transparent,
+          elevation: 0,
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             _buildSymptomCard(
               context,
+              'Molluscum Contagiosum',
+              'A viral skin infection that’s very common in children.',
+              0.9,
+            ),
+            const SizedBox(height: 16),
+            _buildSymptomCard(
+              context,
               'Headache',
-              'A common symptom that can be caused by many factors such as stress, dehydration, or other illnesses.',
-              'Common',
-              0.7, // A visual representation of rarity (0.0 - 1.0 scale)
-              'assets/images/symptom_image.png', // Add the actual image path
+              'Pain or discomfort in the head or scalp, often caused by stress or dehydration.',
+              0.8,
             ),
             const SizedBox(height: 16),
             _buildSymptomCard(
               context,
               'Fever',
-              'A rise in body temperature, usually a sign of infection or illness.',
-              'Rare',
-              0.4, // Example rarity representation
-              'assets/images/fever_image.png', // Add the actual image path
+              'A temporary increase in body temperature, often due to an infection.',
+              0.5,
+            ),
+            const SizedBox(height: 16),
+            _buildSymptomCard(
+              context,
+              'Sore Throat',
+              'A painful, dry, or scratchy feeling in the throat, commonly a symptom of a cold.',
+              0.7,
+            ),
+            const SizedBox(height: 16),
+            _buildSymptomCard(
+              context,
+              'Cough',
+              'A reflex action to clear the airways, often a symptom of a cold or respiratory infection.',
+              0.6,
+            ),
+            const SizedBox(height: 16),
+            _buildSymptomCard(
+              context,
+              'Runny Nose',
+              'Excess nasal drainage, often clear and thin, commonly due to allergies or infections.',
+              0.4,
             ),
           ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex, // Set the current selected index
+        currentIndex: _selectedIndex,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home, size: 26),
@@ -104,59 +135,65 @@ class _SymptomCheckerPageState extends State<SymptomCheckerPage> {
             label: 'Alert',
           ),
         ],
-        selectedItemColor: Colors.deepPurple, // Color for the selected item
+        selectedItemColor: Colors.deepPurple,
         unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped, // Handle icon tap action
+        onTap: _onItemTapped,
       ),
     );
   }
 
-  Widget _buildSymptomCard(BuildContext context, String name, String description, String rarity, double rarityValue, String imagePath) {
+  Widget _buildSymptomCard(BuildContext context, String name, String description, double frequencyValue) {
+    Color frequencyColor = frequencyValue > 0.6 ? Colors.red : Colors.green;
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Symptom: $name',
+                    name,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     description,
-                    style: const TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16, color: Colors.black54),
                   ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      const Text(
-                        'Rarity: ',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                       Expanded(
-                        child: LinearProgressIndicator(
-                          value: rarityValue, // Progress bar to represent rarity
-                          color: Colors.green,
-                          backgroundColor: Colors.grey[300],
-                          minHeight: 8,
+                        child: Container(
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: FractionallySizedBox(
+                            alignment: Alignment.centerLeft,
+                            widthFactor: frequencyValue,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: frequencyColor,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        rarity,
+                        '${(frequencyValue * 100).toStringAsFixed(0)}%',
                         style: const TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     ],
@@ -165,11 +202,17 @@ class _SymptomCheckerPageState extends State<SymptomCheckerPage> {
               ),
             ),
             const SizedBox(width: 16),
-            Image(
-              image: AssetImage(imagePath),
-              height: 80,
-              width: 80,
-              fit: BoxFit.cover,
+            const Icon(
+              Icons.sick,
+              size: 50,
+              color: Colors.blue,
+            ),
+            const SizedBox(width: 10),
+            IconButton(
+              icon: const Icon(Icons.add_circle, size: 30, color: Colors.blue),
+              onPressed: () {
+                // Handle add action
+              },
             ),
           ],
         ),
